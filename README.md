@@ -25,6 +25,11 @@ InvoiceDate – Date and time of the transaction
 
 UnitPrice - Price per unit 
 
+CustomerID - Unique customer identifier
+
+Country – Country of residence of the customer
+
+
 * ### *Tools Used* ###
 
 -RGui / RStudio
@@ -77,6 +82,3 @@ UnitPrice - Price per unit
 ## 👩🏾‍💻 Author
  *Nancy Lucas*   
 Catholic University of Eastern Africa
-CustomerID - Unique customer identifier
-
-Country – Country of residence of the customer
