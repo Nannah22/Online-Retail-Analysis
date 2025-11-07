@@ -1,0 +1,603 @@
+> # Load required libraries
+> library(tidyverse)
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Warning messages:
+1: package ‘tidyverse’ was built under R version 4.5.2 
+2: package ‘ggplot2’ was built under R version 4.5.2 
+3: package ‘tidyr’ was built under R version 4.5.2 
+4: package ‘readr’ was built under R version 4.5.2 
+5: package ‘purrr’ was built under R version 4.5.2 
+6: package ‘forcats’ was built under R version 4.5.2 
+7: package ‘lubridate’ was built under R version 4.5.2 
+> library(lubridate)
+> library(DataExplorer)
+Warning message:
+package ‘DataExplorer’ was built under R version 4.5.2 
+> library(arules)
+Loading required package: Matrix
+
+Attaching package: ‘Matrix’
+
+The following objects are masked from ‘package:tidyr’:
+
+    expand, pack, unpack
+
+
+Attaching package: ‘arules’
+
+The following object is masked from ‘package:dplyr’:
+
+    recode
+
+The following objects are masked from ‘package:base’:
+
+    abbreviate, write
+
+Warning message:
+package ‘arules’ was built under R version 4.5.2 
+> library(arulesViz)
+Warning message:
+package ‘arulesViz’ was built under R version 4.5.2 
+> library(factoextra)
+Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
+Warning message:
+package ‘factoextra’ was built under R version 4.5.2 
+> library(cluster)
+> library(gridExtra)
+
+Attaching package: ‘gridExtra’
+
+The following object is masked from ‘package:dplyr’:
+
+    combine
+
+Warning message:
+package ‘gridExtra’ was built under R version 4.5.2 
+> library(scales)
+
+Attaching package: ‘scales’
+
+The following object is masked from ‘package:purrr’:
+
+    discard
+
+The following object is masked from ‘package:readr’:
+
+    col_factor
+
+Warning message:
+package ‘scales’ was built under R version 4.5.2 
+> library(janitor)
+
+Attaching package: ‘janitor’
+
+The following objects are masked from ‘package:stats’:
+
+    chisq.test, fisher.test
+
+Warning message:
+package ‘janitor’ was built under R version 4.5.2 
+> library(readxl)
+Warning message:
+package ‘readxl’ was built under R version 4.5.2 
+> # Loading your Excel file
+> data <- read_excel("C:/Users/Wykes Lucas/Desktop/Transaction Online Retail R.xlsx")
+-\|/-\|/-\|/-\|/-\|/-\|/-                                                                              /                                                                              -                                                                              > vi
+function (name = NULL, file = "") 
+edit.default(name, file, editor = "vi")
+<bytecode: 0x000001da3db140b0>
+<environment: namespace:utils>
+> view(data)
+> # Loading the dataset
+> data <- read_excel("Transaction Online Retail R.xlsx")
+Error: `path` does not exist: ‘Transaction Online Retail R.xlsx’
+> 
+> # Initial data inspection
+> cat("=== DATASET OVERVIEW ===\n")
+=== DATASET OVERVIEW ===
+> cat("Dataset Dimensions:", dim(data), "\n\n")
+Dataset Dimensions: 541909 8 
+
+> 
+> cat("=== DATASET STRUCTURE ===\n")
+=== DATASET STRUCTURE ===
+> glimpse(data)
+Rows: 541,909
+Columns: 8
+$ InvoiceNo   <chr> "536365", "536365", "536365", "536365", "536365", "536365"…
+$ StockCode   <chr> "85123A", "71053", "84406B", "84029G", "84029E", "22752", …
+$ Description <chr> "WHITE HANGING HEART T-LIGHT HOLDER", "WHITE METAL LANTERN…
+$ Quantity    <dbl> 6, 6, 8, 6, 6, 2, 6, 6, 6, 32, 6, 6, 8, 6, 6, 3, 2, 3, 3, …
+$ InvoiceDate <chr> "2010-12-01T08:26:00.00000026542693050", "2010-12-01T08:26…
+$ UnitPrice   <dbl> 2.55, 3.39, 2.75, 3.39, 3.39, 7.65, 4.25, 1.85, 1.85, 1.69…
+$ CustomerID  <dbl> 17850, 17850, 17850, 17850, 17850, 17850, 17850, 17850, 17…
+$ Country     <chr> "United Kingdom", "United Kingdom", "United Kingdom", "Uni…
+> cat("\n")
+
+> 
+> cat("=== SUMMARY STATISTICS ===\n")
+=== SUMMARY STATISTICS ===
+> summary(data)
+  InvoiceNo          StockCode         Description           Quantity         
+ Length:541909      Length:541909      Length:541909      Min.   :-80995.000  
+ Class :character   Class :character   Class :character   1st Qu.:     1.000  
+ Mode  :character   Mode  :character   Mode  :character   Median :     3.000  
+                                                          Mean   :     9.552  
+                                                          3rd Qu.:    10.000  
+                                                          Max.   : 80995.000  
+                                                                              
+ InvoiceDate          UnitPrice            CustomerID       Country         
+ Length:541909      Min.   :-11062.060   Min.   :12346    Length:541909     
+ Class :character   1st Qu.:     1.250   1st Qu.:13953    Class :character  
+ Mode  :character   Median :     2.080   Median :15152    Mode  :character  
+                    Mean   :     4.611   Mean   :15288                      
+                    3rd Qu.:     4.130   3rd Qu.:16791                      
+                    Max.   : 38970.000   Max.   :18287                      
+                                         NA's   :135080                     
+> cat("\n")
+
+> 
+> cat("=== MISSING VALUES ANALYSIS ===\n")
+=== MISSING VALUES ANALYSIS ===
+> missing_summary <- data %>%
++   summarise(across(everything(), ~sum(is.na(.)))) %>%
++   pivot_longer(everything(), names_to = "Column", values_to = "Missing_Count") %>%
++   mutate(Missing_Percentage = round(Missing_Count/nrow(data)*100, 2))
+> print(missing_summary)
+# A tibble: 8 × 3
+  Column      Missing_Count Missing_Percentage
+  <chr>               <int>              <dbl>
+1 InvoiceNo               0               0   
+2 StockCode               0               0   
+3 Description          1454               0.27
+4 Quantity                0               0   
+5 InvoiceDate             0               0   
+6 UnitPrice               0               0   
+7 CustomerID         135080              24.9 
+8 Country                 0               0   
+> 
+> # Data cleaning 
+> cat("\n=== QUESTION 2: DATA CLEANING ===\n")
+
+=== QUESTION 2: DATA CLEANING ===
+> 
+> # Quick cleaning
+> clean_data <- data
+> cat("Step 0 - Original:", nrow(clean_data), "rows\n")
+Step 0 - Original: 541909 rows
+> 
+> clean_data <- clean_data %>% filter(!is.na(CustomerID))
+> cat("Step 1 - Remove NA CustomerID:", nrow(clean_data), "rows\n")
+Step 1 - Remove NA CustomerID: 406829 rows
+> 
+> clean_data <- clean_data %>% filter(Quantity > 0, UnitPrice > 0)
+> cat("Step 2 - Remove negatives:", nrow(clean_data), "rows\n")
+Step 2 - Remove negatives: 397884 rows
+> 
+> clean_data <- clean_data %>% distinct()
+> cat("Step 3 - Remove duplicates:", nrow(clean_data), "rows\n")
+Step 3 - Remove duplicates: 392692 rows
+> 
+> # Add basic features
+> clean_data <- clean_data %>%
++   mutate(
++     TotalSales = Quantity * UnitPrice,
++     InvoiceDate = as.POSIXct(InvoiceDate)
++   )
+> 
+> cat("Final cleaned data:", nrow(clean_data), "rows\n")
+Final cleaned data: 392692 rows
+> cat("Percentage retained:", round(nrow(clean_data)/nrow(data)*100, 2), "%\n")
+Percentage retained: 72.46 %
+> 
+> # Show sample of cleaned data
+> cat("\nSample of cleaned data:\n")
+
+Sample of cleaned data:
+> print(head(clean_data))
+# A tibble: 6 × 9
+  InvoiceNo StockCode Description         Quantity InvoiceDate         UnitPrice
+  <chr>     <chr>     <chr>                  <dbl> <dttm>                  <dbl>
+1 536365    85123A    WHITE HANGING HEAR…        6 2010-12-01 00:00:00      2.55
+2 536365    71053     WHITE METAL LANTERN        6 2010-12-01 00:00:00      3.39
+3 536365    84406B    CREAM CUPID HEARTS…        8 2010-12-01 00:00:00      2.75
+4 536365    84029G    KNITTED UNION FLAG…        6 2010-12-01 00:00:00      3.39
+5 536365    84029E    RED WOOLLY HOTTIE …        6 2010-12-01 00:00:00      3.39
+6 536365    22752     SET 7 BABUSHKA NES…        2 2010-12-01 00:00:00      7.65
+# ℹ 3 more variables: CustomerID <dbl>, Country <chr>, TotalSales <dbl>
+> 
+> cat("\n", strrep("=", 50), "\n")
+
+ ================================================== 
+> cat("QUESTION 3: BUSINESS METRICS SUMMARY\n")
+QUESTION 3: BUSINESS METRICS SUMMARY
+> cat(strrep("=", 50), "\n\n")
+================================================== 
+
+> 
+> # Basic metrics
+> total_customers <- length(unique(clean_data$CustomerID))
+> cat("✓ Total Customers:", total_customers, "\n")
+✓ Total Customers: 4338 
+> 
+> total_products <- length(unique(clean_data$StockCode))
+> cat("✓ Total Products:", total_products, "\n")
+✓ Total Products: 3665 
+> 
+> total_countries <- length(unique(clean_data$Country))
+> cat("✓ Total Countries:", total_countries, "\n")
+✓ Total Countries: 37 
+> 
+> total_transactions <- length(unique(clean_data$InvoiceNo))
+> cat("✓ Total Transactions:", total_transactions, "\n")
+✓ Total Transactions: 18532 
+> 
+> # Revenue calculations
+> if(!"TotalSales" %in% names(clean_data)) {
++   clean_data$TotalSales <- clean_data$Quantity * clean_data$UnitPrice
++ }
+> total_revenue <- sum(clean_data$TotalSales, na.rm = TRUE)
+> cat("✓ Total Revenue: £", round(total_revenue, 2), "\n")
+✓ Total Revenue: £ 8887209 
+> 
+> # Average transaction
+> invoice_totals <- tapply(clean_data$TotalSales, as.character(clean_data$InvoiceNo), sum, na.rm = TRUE)
+> avg_transaction <- mean(invoice_totals, na.rm = TRUE)
+> cat("✓ Average Transaction: £", round(avg_transaction, 2), "\n\n")
+✓ Average Transaction: £ 479.56 
+
+> 
+> # Additional insights
+> revenue_per_customer <- total_revenue / total_customers
+> transactions_per_customer <- total_transactions / total_customers
+> 
+> cat("ADDITIONAL INSIGHTS:\n")
+ADDITIONAL INSIGHTS:
+> cat("• Revenue per Customer: £", round(revenue_per_customer, 2), "\n")
+• Revenue per Customer: £ 2048.69 
+> cat("• Transactions per Customer:", round(transactions_per_customer, 2), "\n")
+• Transactions per Customer: 4.27 
+> 
+> cat("\n", strrep("=", 50), "\n")
+
+ ================================================== 
+> cat("QUESTION 3 COMPLETED!\n")
+QUESTION 3 COMPLETED!
+> cat(strrep("=", 50), "\n")
+================================================== 
+> # ============================================================================
+> # QUESTION 4: EXPLORATORY DATA ANALYSIS & VISUALIZATIONS
+> # ============================================================================
+> 
+> cat("\n", strrep("=", 60), "\n")
+
+ ============================================================ 
+> cat("QUESTION 4: EXPLORATORY DATA ANALYSIS & VISUALIZATIONS\n")
+QUESTION 4: EXPLORATORY DATA ANALYSIS & VISUALIZATIONS
+> cat(strrep("=", 60), "\n\n")
+============================================================ 
+
+> 
+> # 1. REVENUE ANALYSIS BY COUNTRY
+> cat("1. REVENUE ANALYSIS BY COUNTRY\n")
+1. REVENUE ANALYSIS BY COUNTRY
+> cat(strrep("-", 40), "\n")
+---------------------------------------- 
+> 
+> country_revenue <- clean_data %>%
++   group_by(Country) %>%
++   summarise(
++     TotalRevenue = sum(TotalSales),
++     TotalCustomers = n_distinct(CustomerID),
++     TotalTransactions = n_distinct(InvoiceNo),
++     AvgTransaction = mean(TotalSales)
++   ) %>%
++   arrange(desc(TotalRevenue))
+> 
+> print(country_revenue)
+# A tibble: 37 × 5
+   Country        TotalRevenue TotalCustomers TotalTransactions AvgTransaction
+   <chr>                 <dbl>          <int>             <int>          <dbl>
+ 1 United Kingdom     7285025.           3920             16646           20.9
+ 2 Netherlands         285446.              9                94          121. 
+ 3 EIRE                265262.              3               260           36.7
+ 4 Germany             228678.             94               457           25.3
+ 5 France              208934.             87               389           25.1
+ 6 Australia           138454.              9                57          117. 
+ 7 Spain                61559.             30                90           24.8
+ 8 Switzerland          56444.             21                51           30.7
+ 9 Belgium              41196.             25                98           20.3
+10 Sweden               38368.              8                36           85.3
+# ℹ 27 more rows
+# ℹ Use `print(n = ...)` to see more rows
+> 
+> # Visualization: Top 10 Countries by Revenue
+> p1 <- country_revenue %>%
++   head(10) %>%
++   ggplot(aes(x = reorder(Country, TotalRevenue), y = TotalRevenue)) +
++   geom_bar(stat = "identity", fill = "steelblue") +
++   coord_flip() +
++   labs(title = "Top 10 Countries by Revenue",
++        x = "Country", y = "Total Revenue (£)") +
++   scale_y_continuous(labels = scales::comma) +
++   theme_minimal()
+> 
+> print(p1)
+> 
+> # 2. TEMPORAL ANALYSIS - MONTHLY REVENUE TRENDS
+> cat("\n2. TEMPORAL ANALYSIS - MONTHLY REVENUE TRENDS\n")
+
+2. TEMPORAL ANALYSIS - MONTHLY REVENUE TRENDS
+> cat(strrep("-", 40), "\n")
+---------------------------------------- 
+> 
+> monthly_revenue <- clean_data %>%
++   mutate(Month = floor_date(InvoiceDate, "month")) %>%
++   group_by(Month) %>%
++   summarise(MonthlyRevenue = sum(TotalSales))
+> 
+> print(monthly_revenue)
+# A tibble: 13 × 2
+   Month               MonthlyRevenue
+   <dttm>                       <dbl>
+ 1 2010-12-01 00:00:00        570423.
+ 2 2011-01-01 00:00:00        568101.
+ 3 2011-02-01 00:00:00        446085.
+ 4 2011-03-01 00:00:00        594082.
+ 5 2011-04-01 00:00:00        468374.
+ 6 2011-05-01 00:00:00        677355.
+ 7 2011-06-01 00:00:00        660046.
+ 8 2011-07-01 00:00:00        598963.
+ 9 2011-08-01 00:00:00        644051.
+10 2011-09-01 00:00:00        950690.
+11 2011-10-01 00:00:00       1035642.
+12 2011-11-01 00:00:00       1156206.
+13 2011-12-01 00:00:00        517190.
+> 
+> p2 <- ggplot(monthly_revenue, aes(x = Month, y = MonthlyRevenue)) +
++   geom_line(color = "darkred", size = 1) +
++   geom_point(color = "darkred") +
++   labs(title = "Monthly Revenue Trends",
++        x = "Month", y = "Revenue (£)") +
++   scale_y_continuous(labels = scales::comma) +
++   theme_minimal()
+Warning message:
+Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+generated. 
+> 
+> print(p2)
+> 
+> # 3. CUSTOMER SEGMENTATION ANALYSIS
+> cat("\n3. CUSTOMER SEGMENTATION ANALYSIS\n")
+
+3. CUSTOMER SEGMENTATION ANALYSIS
+> cat(strrep("-", 40), "\n")
+---------------------------------------- 
+> 
+> customer_metrics <- clean_data %>%
++   group_by(CustomerID) %>%
++   summarise(
++     TotalSpend = sum(TotalSales),
++     TransactionCount = n_distinct(InvoiceNo),
++     AvgTransaction = mean(TotalSales),
++     FirstPurchase = min(InvoiceDate),
++     LastPurchase = max(InvoiceDate)
++   ) %>%
++   mutate(
++     CustomerLifetime = as.numeric(difftime(LastPurchase, FirstPurchase, units = "days"))
++   )
+> 
+> # Customer segments based on spending
+> customer_segments <- customer_metrics %>%
++   mutate(
++     Segment = case_when(
++       TotalSpend > quantile(TotalSpend, 0.8) ~ "High Value",
++       TotalSpend > quantile(TotalSpend, 0.5) ~ "Medium Value",
++       TRUE ~ "Low Value"
++     )
++   )
+> 
+> segment_summary <- customer_segments %>%
++   group_by(Segment) %>%
++   summarise(
++     Customers = n(),
++     AvgSpend = mean(TotalSpend),
++     AvgTransactions = mean(TransactionCount),
++     Percentage = n() / nrow(customer_segments) * 100
++   )
+> 
+> print(segment_summary)
+# A tibble: 3 × 5
+  Segment      Customers AvgSpend AvgTransactions Percentage
+  <chr>            <int>    <dbl>           <dbl>      <dbl>
+1 High Value         868    7647.           11.7        20.0
+2 Low Value         2169     320.            1.57       50  
+3 Medium Value      1301    1196.            3.79       30.0
+> 
+> # Visualization: Customer Segments
+> p3 <- ggplot(segment_summary, aes(x = Segment, y = Customers, fill = Segment)) +
++   geom_bar(stat = "identity") +
++   geom_text(aes(label = paste0(round(Percentage, 1), "%")), vjust = -0.5) +
++   labs(title = "Customer Segmentation by Spending",
++        x = "Customer Segment", y = "Number of Customers") +
++   scale_fill_brewer(palette = "Set2") +
++   theme_minimal()
+> 
+> print(p3)
+> 
+> # 4. PRODUCT PERFORMANCE ANALYSIS
+> cat("\n4. PRODUCT PERFORMANCE ANALYSIS\n")
+
+4. PRODUCT PERFORMANCE ANALYSIS
+> cat(strrep("-", 40), "\n")
+---------------------------------------- 
+> 
+> product_performance <- clean_data %>%
++   group_by(StockCode, Description) %>%
++   summarise(
++     TotalRevenue = sum(TotalSales),
++     TotalQuantity = sum(Quantity),
++     TransactionCount = n_distinct(InvoiceNo),
++     AvgPrice = mean(UnitPrice)
++   ) %>%
++   arrange(desc(TotalRevenue))
+`summarise()` has grouped output by 'StockCode'. You can override using the
+`.groups` argument.
+> 
+> cat("Top 10 Products by Revenue:\n")
+Top 10 Products by Revenue:
+> print(head(product_performance, 10))
+# A tibble: 10 × 6
+# Groups:   StockCode [10]
+   StockCode Description    TotalRevenue TotalQuantity TransactionCount AvgPrice
+   <chr>     <chr>                 <dbl>         <dbl>            <int>    <dbl>
+ 1 23843     PAPER CRAFT ,…      168470.         80995                1     2.08
+ 2 22423     REGENCY CAKES…      142265.         12374             1703    12.5 
+ 3 85123A    WHITE HANGING…      100392.         36706             1971     2.89
+ 4 85099B    JUMBO BAG RED…       85041.         46078             1600     2.02
+ 5 23166     MEDIUM CERAMI…       81417.         77916              195     1.22
+ 6 POST      POSTAGE              77804.          3120             1099    31.6 
+ 7 47566     PARTY BUNTING        68785.         15279             1379     4.88
+ 8 84879     ASSORTED COLO…       56413.         35263             1375     1.68
+ 9 M         Manual               53420.          6933              253   178.  
+10 23084     RABBIT NIGHT …       51251.         27153              801     2.01
+> 
+> # Visualization: Top 10 Products
+> p4 <- product_performance %>%
++   head(10) %>%
++   ggplot(aes(x = reorder(Description, TotalRevenue), y = TotalRevenue)) +
++   geom_bar(stat = "identity", fill = "darkgreen") +
++   coord_flip() +
++   labs(title = "Top 10 Products by Revenue",
++        x = "Product Description", y = "Total Revenue (£)") +
++   scale_y_continuous(labels = scales::comma) +
++   theme_minimal()
+> 
+> print(p4)
+> 
+> # 5. TRANSACTION SIZE ANALYSIS
+> cat("\n5. TRANSACTION SIZE ANALYSIS\n")
+
+5. TRANSACTION SIZE ANALYSIS
+> cat(strrep("-", 40), "\n")
+---------------------------------------- 
+> 
+> transaction_sizes <- clean_data %>%
++   group_by(InvoiceNo) %>%
++   summarise(TransactionTotal = sum(TotalSales))
+> 
+> transaction_summary <- transaction_sizes %>%
++   summarise(
++     AvgTransaction = mean(TransactionTotal),
++     MedianTransaction = median(TransactionTotal),
++     MaxTransaction = max(TransactionTotal),
++     MinTransaction = min(TransactionTotal)
++   )
+> 
+> print(transaction_summary)
+# A tibble: 1 × 4
+  AvgTransaction MedianTransaction MaxTransaction MinTransaction
+           <dbl>             <dbl>          <dbl>          <dbl>
+1           480.              303.        168470.           0.38
+> 
+> # Visualization: Transaction Size Distribution
+> p5 <- ggplot(transaction_sizes, aes(x = TransactionTotal)) +
++   geom_histogram(bins = 50, fill = "purple", alpha = 0.7) +
++   labs(title = "Distribution of Transaction Sizes",
++        x = "Transaction Amount (£)", y = "Frequency") +
++   scale_x_continuous(labels = scales::comma) +
++   theme_minimal()
+> 
+> print(p5)
+> 
+> # 6. CUSTOMER PURCHASE FREQUENCY
+> cat("\n6. CUSTOMER PURCHASE FREQUENCY\n")
+
+6. CUSTOMER PURCHASE FREQUENCY
+> cat(strrep("-", 40), "\n")
+---------------------------------------- 
+> 
+> purchase_frequency <- customer_metrics %>%
++   summarise(
++     AvgTransactionsPerCustomer = mean(TransactionCount),
++     MedianTransactionsPerCustomer = median(TransactionCount),
++     MaxTransactions = max(TransactionCount)
++   )
+> 
+> print(purchase_frequency)
+# A tibble: 1 × 3
+  AvgTransactionsPerCustomer MedianTransactionsPerCustomer MaxTransactions
+                       <dbl>                         <dbl>           <int>
+1                       4.27                             2             209
+> 
+> # Visualization: Customer Purchase Frequency
+> p6 <- ggplot(customer_metrics, aes(x = TransactionCount)) +
++   geom_histogram(bins = 30, fill = "orange", alpha = 0.7) +
++   labs(title = "Customer Purchase Frequency Distribution",
++        x = "Number of Transactions", y = "Number of Customers") +
++   theme_minimal()
+> 
+> print(p6)
+> 
+> # 7. KEY INSIGHTS SUMMARY
+> cat("\n", strrep("=", 60), "\n")
+
+ ============================================================ 
+> cat("KEY BUSINESS INSIGHTS SUMMARY\n")
+KEY BUSINESS INSIGHTS SUMMARY
+> cat(strrep("=", 60), "\n\n")
+============================================================ 
+
+> 
+> cat("?? REVENUE INSIGHTS:\n")
+?? REVENUE INSIGHTS:
+> cat("   • Top revenue country:", country_revenue$Country[1], "(£", round(country_revenue$TotalRevenue[1], 2), ")\n")
+   • Top revenue country: United Kingdom (£ 7285025 )
+> cat("   • Revenue concentration: Top 3 countries account for", 
++     round(sum(head(country_revenue$TotalRevenue, 3)) / sum(country_revenue$TotalRevenue) * 100, 1), "% of total revenue\n\n")
+   • Revenue concentration: Top 3 countries account for 88.2 % of total revenue
+
+> 
+> cat("?? CUSTOMER INSIGHTS:\n")
+?? CUSTOMER INSIGHTS:
+> cat("   • High-value customers:", segment_summary$Customers[segment_summary$Segment == "High Value"], 
++     "(", round(segment_summary$Percentage[segment_summary$Segment == "High Value"], 1), "% of total)\n")
+   • High-value customers: 868 ( 20 % of total)
+> cat("   • Average transactions per customer:", round(purchase_frequency$AvgTransactionsPerCustomer, 2), "\n\n")
+   • Average transactions per customer: 4.27 
+
+> 
+> cat("?? PRODUCT INSIGHTS:\n")
+?? PRODUCT INSIGHTS:
+> cat("   • Best-selling product:", product_performance$Description[1], 
++     "(£", round(product_performance$TotalRevenue[1], 2), ")\n")
+   • Best-selling product: PAPER CRAFT , LITTLE BIRDIE (£ 168469.6 )
+> cat("   • Total unique products:", nrow(product_performance), "\n\n")
+   • Total unique products: 3894 
+
+> 
+> cat("?? TRANSACTION INSIGHTS:\n")
+?? TRANSACTION INSIGHTS:
+> cat("   • Average transaction value: £", round(transaction_summary$AvgTransaction, 2), "\n")
+   • Average transaction value: £ 479.56 
+> cat("   • Median transaction value: £", round(transaction_summary$MedianTransaction, 2), "\n")
+   • Median transaction value: £ 302.58 
+> 
+> cat("\n", strrep("=", 60), "\n")
+
+ ============================================================ 
+> cat("QUESTION 4 COMPLETED! - EDA & VISUALIZATIONS DONE\n")
+QUESTION 4 COMPLETED! - EDA & VISUALIZATIONS DONE
+> cat(strrep("=", 60), "\n")
